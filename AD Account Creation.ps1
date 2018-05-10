@@ -6,10 +6,10 @@
     is created, based off the role, groups/permissions will be assigned to the user. The final step of this script is to create the mailbox on our Exchange server.
 .NOTES
     Author: David Findley
-    Date: May 2018
+    Date: May 10 2018
 #>
 
-Write-Host "Tradewind Energy Manual Account and Mailbox Creation"
+Write-Host "Manual Account and Mailbox Creation"
 
 # Importing Active Directory module for AD manipulation.
 Import-Module ActiveDirectory -ErrorAction SilentlyContinue
