@@ -36,6 +36,7 @@ $City = "City"
 $State = "State"
 $Company = "Business Name"
 $PhoneNumber = "555-555-5555"
+$Account = (dsquery user -samid $UserName)
 
 # Sanity check on username creation. Eventually this will query AD and verify that the account doesn't exist. 
 Write-Host "The following user, $FullName, will be created using the following username: $UserName. "
@@ -46,7 +47,20 @@ switch ($Readhost) {
     Default {"No response. Exiting script"; exit}
 }
 
-# We have to break up the commands here because of the limitations with older versions of Powershell. 
+# Sanity check on username creation. Eventually this will query AD and verify that the account doesn't exist.
+if ($Account -eq $null){
+Write-Warning "The following username is available: $UserName. Would you like to continue? "
+$Readhost = Read-Host "[Y]es or [N]o"
+switch ($Readhost) {
+    Y {Write-Host "Great! Continuing with this username. "; $Create=$true }
+    N {Write-Host "Let's try that again."; $Create=$false }
+    Default {"Invalid response. Exiting script"; exit}
+}
+}
+else {
+    Write-Error "This username, $UserName, is not available. Please try again."
+    exit
+}
 if ($Create -eq $true) {
     try {
         New-ADUser  -Name $FullName `
@@ -83,3 +97,18 @@ else {
     
 }
 
+# Adding user to group(s) based off of the team they will be joining. Right now the script only does a group at a time. Will udpate to do multiple.
+$TeamName = Read-Host "What group will $FirstName $LastName be a part of? Please enter one: IT, Accounting, Executives "
+if ($TeamName -eq "IT") {
+    Add-ADGroupMember -Identity "IT-Test" -Member $UserName # Test groups in the test environment. 
+    Write-Host "User successfully added to group IT."
+    }
+        if ($TeamName -eq "Accounting"){
+        Add-ADGroupMember -Identity "Accounting-Test" -Member $UserName  
+    Write-Host "User successfully added to group GIS."
+        }
+        
+else {
+    Write-Host "User not added to any groups."
+    exit
+    }
