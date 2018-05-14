@@ -100,9 +100,9 @@ else {
 # Adding user to group(s) based off of the team they will be joining. These three groups are examples of multiple choice. 
 $TeamName = Read-Host "What group will $FirstName $LastName be a part of? Please enter one: Executive, Accounting, IT "
     if ($TeamName -eq "Executive") {
-        Add-ADPrincipalGroupMembership -Identity:"CN=$FirstName $LastName,CN=Users,DC=servername,DC=local" -MemberOf:"CN=Full Gropu Name,CN=Users,DC=servername,DC=local", "CN=GIS Portal Publishers,CN=Users,DC=servername,DC=local", `
-        "CN=GIS Map Services,CN=Users,DC=servername,DC=local", "CN=GIS Map Publishers,CN=Users,DC=servername,DC=local", "CN=GIS Internal Portal Users,CN=Users,DC=servername,DC=local", `
-        "CN=GIS Foreign User Map Services,CN=Users,DC=servername,DC=local" -Server:"servername.domainname.local"
+        Add-ADPrincipalGroupMembership -Identity:"CN=$FirstName $LastName,CN=Users,DC=servername,DC=local" -MemberOf:"CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", `
+        "CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", `
+        "CN=Full Group Name,CN=Users,DC=servername,DC=local" -Server:"servername.domainname.local"
         Write-Host "User, $FirstName $LastName, successfully added to GIS Groups."
         }
             elseif ($TeamName -eq "Accounting"){
