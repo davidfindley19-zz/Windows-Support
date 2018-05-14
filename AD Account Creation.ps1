@@ -2,12 +2,12 @@
 .SYNOPSIS
     Scripted account and mailbox creation for new users.
 .DESCRIPTION
-    This is accomplished by prompting with a form for the new user's information. The script will truncate the full name to create the username based off Tradewind Energy standards. After the username
+    This is accomplished by prompting with a form for the new user's information. The script will truncate the full name to create the username based off company IT standards. After the username
     is created, based off the role, groups/permissions will be assigned to the user. The final step of this script is to create the mailbox on our Exchange server.
 .NOTES
     Author: David Findley
     Date: May 10 2018
-    Version: 1.01 - Edited for consistency with our production version.
+    Version: 1.3 - Multi-group support in AD. 
 #>
 
 Write-Host "Manual Account and Mailbox Creation"
@@ -97,18 +97,28 @@ else {
     
 }
 
-# Adding user to group(s) based off of the team they will be joining. Right now the script only does a group at a time. Will udpate to do multiple.
-$TeamName = Read-Host "What group will $FirstName $LastName be a part of? Please enter one: IT, Accounting, Executives "
-if ($TeamName -eq "IT") {
-    Add-ADGroupMember -Identity "IT-Test" -Member $UserName # Test groups in the test environment. 
-    Write-Host "User successfully added to group IT."
-    }
-        if ($TeamName -eq "Accounting"){
-        Add-ADGroupMember -Identity "Accounting-Test" -Member $UserName  
-    Write-Host "User successfully added to group GIS."
+# Adding user to group(s) based off of the team they will be joining. These three groups are examples of multiple choice. 
+$TeamName = Read-Host "What group will $FirstName $LastName be a part of? Please enter one: Executive, Accounting, IT "
+    if ($TeamName -eq "Executive") {
+        Add-ADPrincipalGroupMembership -Identity:"CN=$FirstName $LastName,CN=Users,DC=servername,DC=local" -MemberOf:"CN=Full Gropu Name,CN=Users,DC=servername,DC=local", "CN=GIS Portal Publishers,CN=Users,DC=servername,DC=local", `
+        "CN=GIS Map Services,CN=Users,DC=servername,DC=local", "CN=GIS Map Publishers,CN=Users,DC=servername,DC=local", "CN=GIS Internal Portal Users,CN=Users,DC=servername,DC=local", `
+        "CN=GIS Foreign User Map Services,CN=Users,DC=servername,DC=local" -Server:"servername.domainname.local"
+        Write-Host "User, $FirstName $LastName, successfully added to GIS Groups."
         }
+            elseif ($TeamName -eq "Accounting"){
+            Add-ADPrincipalGroupMembership -Identity:"CN=$FirstName $LastName,CN=Users,DC=servername,DC=local" -MemberOf:"CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", `
+            "CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", `
+            "CN=Full Group Name,CN=Users,DC=servername,DC=local" -Server:"servername.domainname.local"
+            Write-Host "User, $FirstName $LastName, successfully added to Accounting Groups."
+            }
+                elseif ($TeamName -eq "IT") {
+                Add-ADPrincipalGroupMembership -Identity:"CN=$FirstName $LastName,CN=Users,DC=servername,DC=local" -MemberOf:"CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", `
+                "CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", "CN=Full Group Name,CN=Users,DC=servername,DC=local", `
+                "CN=Full Group Name,CN=Users,DC=servername,DC=local" -Server:"servername.domainname.local"
+                Write-Host "User, $FirstName $LastName, successfully added to IT Groups."
+                }
         
-else {
+    else {
     Write-Host "User not added to any groups."
     exit
     }
