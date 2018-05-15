@@ -57,7 +57,7 @@ if ($Create -eq $true) {
                     -SamAccountName $SamAccountName `
                     -GivenName $Surname 
         Write-Host "$FullName : Account created successfully."
-        $JobTitle = Read-Host -Prompt "What is $FirstName $LastName's job title?"
+        $JobTitle = Read-Host -Prompt "What is $FullName's job title?"
         Write-Host "$FullName : Account created successfully." 
     }
         
