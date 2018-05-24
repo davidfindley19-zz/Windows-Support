@@ -235,7 +235,7 @@ function Show-Account_GUI_Blank_psf {
 	$statusbar1.Name = 'statusbar1'
 	$statusbar1.Size = '868, 22'
 	$statusbar1.TabIndex = 2
-	$statusbar1.Text = 'Tradewind Account Creation Tool v1.0'
+	$statusbar1.Text = 'Account Creation Tool v1.0'
 	#
 	# groupbox2
 	#
