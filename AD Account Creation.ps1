@@ -9,6 +9,16 @@
     Date: May 15, 2018
 #>
 
+Param(
+    [Parameter(Mandatory = $true, HelpMessage = "Enter the new user's first name.")]
+    [string]$FirstName,
+    [Parameter(Mandatory = $true, HelpMessage = "Enter the new user's last name.")]
+    [string]$LastName,
+    [Parameter(Mandatory = $true, HelpMessage = "Enter the position title of the new user.")]
+    [string]$Title
+
+)
+
 Write-Host "Manual Account and Mailbox Creation"
 
 # Importing Active Directory module for AD manipulation.
@@ -18,19 +28,26 @@ Import-Module ActiveDirectory -ErrorAction SilentlyContinue
 $UserCredential = Get-Credential "$env:USERDOMAIN\$env:USERNAME"
 
 # Prompting for new user's full name.
-$FirstName = Read-Host -Prompt "Enter the user's first name:"
-$LastName = Read-Host -Prompt "Enter the user's last name:"
+#$FirstName = Read-Host -Prompt "Enter the user's first name:"
+#$LastName = Read-Host -Prompt "Enter the user's last name:"
+$FullName = "$FirstName " + "$LastName"
+$UserName = $($FirstName.Substring(0, 1) + $LastName).ToLower()
+
+$NewUser = @{
+    Name                    =$FullName
+    SamAccountName          =$UserName
+    GivenName               =$Surname
+}
+
 
 # Creating username based off of first initial and last name standard.
 $UserName = $($FirstName.Substring(0,1) + $LastName).ToLower()
 $FullName = "$FirstName " + "$LastName"
 $SamAccountName = $UserName
-$GivenName = $FirstName
 $Surname = $LastName
 $EmailAddress = $UserName + "@business.com"
 $StreetAddress = "12345 S. Road"
 $City = "City"
-$State = "State"
 $Company = "Business Name"
 $PhoneNumber = "555-555-5555"
 $Account = (dsquery user -samid $UserName)
@@ -53,9 +70,7 @@ else {
 }
 if ($Create -eq $true) {
     try {
-        New-ADUser  -Name $FullName `
-                    -SamAccountName $SamAccountName `
-                    -GivenName $Surname 
+        New-ADUser  @NewUser
         Write-Host "$FullName : Account created successfully."
         $JobTitle = Read-Host -Prompt "What is $FullName's job title?"
         Write-Host "$FullName : Account created successfully." 
@@ -78,6 +93,8 @@ if (dsquery user -samid $UserName) {
                                         -Surname  $LastName `
                                         -EmailAddress $EmailAddress `
                                         -Company $Company `
+                                        -StreetAddress $StreetAddress `
+                                        -City $City
                                         -UserPrincipalName "$UserName@domain.com" `
                                         -Enable $true `
                                         -DisplayName "$FirstName $LastName"
