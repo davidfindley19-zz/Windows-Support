@@ -28,8 +28,7 @@ Import-Module ActiveDirectory -ErrorAction SilentlyContinue
 # Just grabbing current user credentials. This is assuming user executing script has privileges to modify domain users.
 $UserCredential = Get-Credential "$env:USERDOMAIN\$env:USERNAME"
 
-# Creating full name from the variables. Creates a new user hashtable for splatting later in the script. In newer versions of PS, you can add 
-# all the Get-ADUser code to the NewUser hashtable and have it add all at once. 
+# Creating full name from the variables. Creates a new user hashtable for splatting later in the script.
 $FullName = "$FirstName " + "$LastName"
 $UserName = $($FirstName.Substring(0, 1) + $LastName).ToLower()
 
