@@ -10,11 +10,11 @@
 #>
 
 Param(
-    [Parameter(Mandatory = $true, HelpMessage = "Enter the new user's first name.")]
+    [Parameter(Mandatory = $true)]
     [string]$FirstName,
-    [Parameter(Mandatory = $true, HelpMessage = "Enter the new user's last name.")]
+    [Parameter(Mandatory = $true)]
     [string]$LastName,
-    [Parameter(Mandatory = $true, HelpMessage = "Enter the position title of the new user.")]
+    [Parameter(Mandatory = $true)]
     [string]$Title
 
 )
@@ -27,9 +27,8 @@ Import-Module ActiveDirectory -ErrorAction SilentlyContinue
 # Just grabbing current user credentials. This is assuming user executing script has privileges to modify domain users.
 $UserCredential = Get-Credential "$env:USERDOMAIN\$env:USERNAME"
 
-# Prompting for new user's full name.
-#$FirstName = Read-Host -Prompt "Enter the user's first name:"
-#$LastName = Read-Host -Prompt "Enter the user's last name:"
+# Creating full name from the variables. Creates a new user hashtable for splatting later in the script. In newer versions of PS, you can add 
+# all the Get-ADUser code to the NewUser hashtable and have it add all at once. 
 $FullName = "$FirstName " + "$LastName"
 $UserName = $($FirstName.Substring(0, 1) + $LastName).ToLower()
 
@@ -41,9 +40,6 @@ $NewUser = @{
 
 
 # Creating username based off of first initial and last name standard.
-$UserName = $($FirstName.Substring(0,1) + $LastName).ToLower()
-$FullName = "$FirstName " + "$LastName"
-$SamAccountName = $UserName
 $Surname = $LastName
 $EmailAddress = $UserName + "@business.com"
 $StreetAddress = "12345 S. Road"
@@ -72,12 +68,12 @@ if ($Create -eq $true) {
     try {
         New-ADUser  @NewUser
         Write-Host "$FullName : Account created successfully."
-        $JobTitle = Read-Host -Prompt "What is $FullName's job title?"
-        Write-Host "$FullName : Account created successfully." 
-    }
+        }
         
     catch {
-        Write-Warning "$FullName : Error occurred while creating account. $_"
+        $wsh = New-Object -com wscript.shell
+        $msg = "Failed to create new user, $FullName. $_"
+        $wsh.Popup($msg, -1, "New User", 0 + 48)
         exit
 
     }
@@ -99,7 +95,7 @@ if (dsquery user -samid $UserName) {
                                         -Enable $true `
                                         -DisplayName "$FirstName $LastName"
                                         -ChangePasswordAtLogon:$false `
-                                        -Title $JobTitle `
+                                        -Title $Title `
                                         -MobilePhone $PhoneNumber `
                                         -PasswordNeverExpires $true                                   
 }   
