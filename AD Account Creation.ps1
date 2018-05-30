@@ -6,7 +6,8 @@
     is created, based off the role, groups/permissions will be assigned to the user. The final step of this script is to create the mailbox on our Exchange server.
 .NOTES
     Author: David Findley
-    Date: May 15, 2018
+    Date: May 30, 2018
+    Version: 1.2
 #>
 
 Param(
