@@ -26,18 +26,14 @@ Write-Host "Manual Account and Mailbox Creation"
 Import-Module ActiveDirectory -ErrorAction SilentlyContinue
 
 # Just grabbing current user credentials. This is assuming user executing script has privileges to modify domain users.
-$UserCredential = Get-Credential "$env:USERDOMAIN\$env:USERNAME"
+$UserCredential = Read-Host "Enter a username: "
+$UserPass = Read-Host -AsSecureString "Enter your password: "
+$Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $UserCredential , $UserPass 
 
-# Creating full name from the variables. Creates a new user hashtable for splatting later in the script.
+
+# Creating full name from the variables. 
 $FullName = "$FirstName " + "$LastName"
 $UserName = $($FirstName.Substring(0, 1) + $LastName).ToLower()
-
-$NewUser = @{
-    Name                    =$FullName
-    SamAccountName          =$UserName
-    GivenName               =$Surname
-}
-
 
 # Creating username based off of first initial and last name standard.
 $Surname = $LastName
@@ -47,8 +43,21 @@ $City = "City"
 $Company = "Business Name"
 $PhoneNumber = "555-555-5555"
 $Account = (dsquery user -samid $UserName)
-$AccountPass = "password1"
-$EncryptPass = convertto-securestring $AccountPass -asplaintext -force
+$Seed = "abcdefghijkmnpqrstuvwxyz0192837465)!(@*#&$^" # Pool of characters for password generation.
+$Random8 = $seed.ToCharArray() | get-random -count 8 # Set to whatever count you want, but I defaulted to 8.
+$RandomString = $Random8 -join "" # Creates a string of characters for the password. 
+[regex]$rx = "[a-z]" # Expression to match any character from a-z.
+$firstalpha = $rx.match($randomstring).value # Get the first matching alphabet character
+$plaintext = $randomstring.Replace($firstalpha, $firstalpha.toUpper()) # Force first character to uppercase.
+$password = ConvertTo-SecureString -String $plaintext -AsPlainText -Force # Converts to secure string for the New-ADUser cmdlet.
+
+#Creates a new user hashtable for splatting later in the script.
+$NewUser = @{
+    Name            = $FullName
+    SamAccountName  = $UserName
+    GivenName       = $Surname
+    AccountPassword = $password
+}
 
 # Sanity check on username creation. 
 if ($Account -eq $null) {
@@ -98,13 +107,12 @@ if (dsquery user -samid $UserName) {
                                         -Title $Title `
                                         -MobilePhone $PhoneNumber `
                                         -PasswordNeverExpires $true                                   
-}   
+
+    Write-Host "User, $UserName, properties successfully set. The password is $plaintext. -ForegroundColor green"
+                                    }   
 else {
     Write-Host "User does not exist in AD."
  
-# Setting user account password parameters
-Get-ADUser $UserName | Set-ADAccountPassword -NewPassword $EncryptPass 
-
 }
 # Adding user to group(s) based off of the team they will be joining.
 $TeamName = Read-Host "What group will $FirstName $LastName be a part of? Please enter one: Executive, Accounting, IT "
