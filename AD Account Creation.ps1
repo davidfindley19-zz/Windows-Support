@@ -6,8 +6,8 @@
     is created, based off the role, groups/permissions will be assigned to the user. The final step of this script is to create the mailbox on our Exchange server.
 .NOTES
     Author: David Findley
-    Date: May 30, 2018
-    Version: 1.2
+    Date: June 8, 2018
+    Version: 1.4
 #>
 
 Param(
@@ -53,10 +53,19 @@ $password = ConvertTo-SecureString -String $plaintext -AsPlainText -Force # Conv
 
 #Creates a new user hashtable for splatting later in the script.
 $NewUser = @{
-    Name            = $FullName
-    SamAccountName  = $UserName
-    GivenName       = $Surname
-    AccountPassword = $password
+    Name                    = $FullName
+    SamAccountName          = $UserName
+    GivenName               = $Surname
+    Surname                 = $LastName 
+    Enable                  = $true
+    AccountPassword         = $password 
+    EmailAddress            = $EmailAddress 
+    Company                 = $Company 
+    DisplayName             = "$FirstName $LastName" 
+    UserPrincipalName       = "$UserName@company.com" 
+    ChangePasswordAtLogon   = $false 
+    PasswordNeverExpires    = $true 
+    Title                   = $JobTitle 
 }
 
 # Sanity check on username creation. 
@@ -92,28 +101,6 @@ else {
     exit
 }
 
-# We'll now fill in the missing information for the created account.
-if (dsquery user -samid $UserName) {
-    Get-ADUser $UserName | Set-ADUser   -GivenName $FirstName `
-                                        -Surname  $LastName `
-                                        -EmailAddress $EmailAddress `
-                                        -Company $Company `
-                                        -StreetAddress $StreetAddress `
-                                        -City $City
-                                        -UserPrincipalName "$UserName@domain.com" `
-                                        -Enable $true `
-                                        -DisplayName "$FirstName $LastName"
-                                        -ChangePasswordAtLogon:$false `
-                                        -Title $Title `
-                                        -MobilePhone $PhoneNumber `
-                                        -PasswordNeverExpires $true                                   
-
-    Write-Host "User, $UserName, properties successfully set. The password is $plaintext. -ForegroundColor green"
-                                    }   
-else {
-    Write-Host "User does not exist in AD."
- 
-}
 # Adding user to group(s) based off of the team they will be joining.
 $TeamName = Read-Host "What group will $FirstName $LastName be a part of? Please enter one: Executive, Accounting, IT "
     if ($TeamName -eq "Executive") {
