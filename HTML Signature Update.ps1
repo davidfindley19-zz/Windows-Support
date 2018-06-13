@@ -3,7 +3,8 @@
     Scripted update of our company default signature file.
 .DESCRIPTION
     The concept is pretty simple. It prompts for the basic user information and then replaces variables set in the HTML file. It is then output as an updated HTML file 
-    leaving the original source file intact. 
+    leaving the original source file intact. This all based on our default HTML signature file that is updated as a user needs. Just fill in the spots with your custom
+    file and create some variables and you're all set. This is mostly to show the syntax for updating it. 
 .NOTES
     Author: David Findley
     Date: June 13, 2018
