@@ -11,12 +11,18 @@
     Version 1.0 (Prod): Automated update of HTML signature file. 
 #>
 
-Write-host "Automated Tool to Update User Signatures"
+Param(
+    [Parameter(Mandatory = $true)]
+    [string]$FullName,
+    [Parameter(Mandatory = $true)]
+    [string]$Title,
+    [Parameter(Mandatory = $true)]
+    [string]$MobilePhone,
+    [Parameter(Mandatory = $true)]
+    [string]$OfficePhone
+)
 
-$FullName = Read-Host "What is the user's full name? "
-$Title = Read-Host "What is their title? "
-$MobilePhone = Read-Host "Mobile phone number? "
-$OfficePhone = Read-Host "Office phone number? "
+Write-host "Automated Tool to Update User Signatures"
 
 $OriginalFile = ".\Signature_Template.htm" 
 $DestinationFile = ".\$FullName Signature.html"
