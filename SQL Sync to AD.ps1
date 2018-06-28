@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Nightly sync for Horizon SQL DB to Active Directory.
+Nightly sync for SQL DB to Active Directory.
 .DESCRIPTION
 Pulls the tables from SQL and matches users in the project to the corresponding groups in AD>
 .NOTES
