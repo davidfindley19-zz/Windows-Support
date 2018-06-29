@@ -13,7 +13,7 @@ Import-Module ActiveDirectory -ErrorAction Stop
 
 $ServerInstance = "SERVER\INSTANCE"
 $Database = "DB NAME"
-$Query = Invoke-Sqlcmd -Query "TYPE YOU QUERY HERE" -Database $Database -ServerInstance $ServerInstance
+$Query = Invoke-Sqlcmd -Query "TYPE YOUR QUERY HERE" -Database $Database -ServerInstance $ServerInstance
 
 Out-File -FilePath C:\Users\Projects.csv -InputObject $Query -Encoding ascii 
 
