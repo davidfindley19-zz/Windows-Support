@@ -2,18 +2,19 @@
 .SYNOPSIS
 Nightly sync for SQL DB to Active Directory.
 .DESCRIPTION
-Pulls the tables from SQL and matches users in the project to the corresponding groups in AD>
+Pulls the tables from SQL and matches users in the project to the corresponding groups in AD.
 .NOTES
 Author: David Findley
 Date: 06/28/2018
 Version: v1.0
+Requires PS v4.0 or above and the AD Powershell tools. 
 #>
 
 Import-Module ActiveDirectory -ErrorAction Stop
 
 $ServerInstance = "SERVER\INSTANCE"
 $Database = "DB NAME"
-$Query = Invoke-Sqlcmd -Query "TYPE YOUR QUERY HERE" -Database $Database -ServerInstance $ServerInstance
+$Query = Invoke-Sqlcmd -Query "TYPE YOUR QUERY HERE" -Database $Database -ServerInstance $ServerInstance 
 
 Out-File -FilePath C:\Users\Projects.csv -InputObject $Query -Encoding ascii 
 
