@@ -13,16 +13,20 @@ Import-Module ActiveDirectory -ErrorAction Stop
 
 $ServerInstance = "SERVER\INSTANCE"
 $Database = "DB NAME"
-$Project = Invoke-Sqlcmd -Query "SELECT * FROM dbo.ProjectMembers ORDER BY Name" -Database $Database -ServerInstance $ServerInstance | Select-Object Name
-$User = Invoke-Sqlcmd -Query "SELECT * FROM dbo.ProjectMembers ORDER BY Name" -Database $Database -ServerInstance $ServerInstance | Select-Object ObjectGUID
+$Query = Invoke-Sqlcmd -Query "TYPE YOU QUERY HERE" -Database $Database -ServerInstance $ServerInstance
 
-Out-File -FilePath C:\Users\Projects.csv -InputObject $Project $User -Encoding ascii -NoTypeInformation
+Out-File -FilePath C:\Users\Projects.csv -InputObject $Query -Encoding ascii 
 
 $DestinationOU = "OU=SomeOUName,DC=Server,DC=local"
 $GroupLines = Import-Csv -Path C:\Users\Projects.csv
-Foreach ($GroupLine in $GroupLines) {
-    TRY {Get-ADGroup $GroupLine.Name}
-    CATCH {New-ADGroup -Name $GroupLine.Name -SamAccountName (($GroupLine.Name).Replace(" ", "")) -GroupCategory Distribution -GroupScope Universal -DisplayName $GroupLine.Name -Path $DestinationOU}
-    }
 
-Add-ADGroupMember -Identity $GroupLine.Name -Members $GroupLine.ObjectGUID
+Foreach ($GroupLine in $GroupLines) {
+    try {
+        Get-ADGroup $GroupLine.Name
+    }
+    catch {
+        New-ADGroup -Name $GroupLine.Name -SamAccountName $GroupLine.Name -GroupCategory Distribution -GroupScope Universal -DisplayName $GroupLine.Name -Path $DestinationOU
+    }
+    Add-ADGroupMember -Identity $GroupLine.Name -Members $GroupLine.ObjectGUID
+}
+
