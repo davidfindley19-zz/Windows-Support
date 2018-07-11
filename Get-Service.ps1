@@ -8,6 +8,20 @@
     Author: David Findley
     Date: July 11, 2018
     Version: 1.0
+.EXAMPLE
+    You can call the script and then enter the name of the service after.
+    
+    C:\Get-Service.ps1 Spooler
+
+    This will pull the information for the Print Spooler service and present your options.
+
+.EXAMPLE
+
+    You can also just call the script and it will prompt your for the service name.
+
+    C:\Get-Service.ps1
+
+    You will receive a mandatory prompt for the service name after starting the script.
 #>
 
 Param(
