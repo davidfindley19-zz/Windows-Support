@@ -37,6 +37,7 @@ else {
 
 if ($Restart -eq $true){
     Restart-Service $Status
+    Write-host "$($Status.DisplayName) is now $($Status.Status). "
 }
 else {
     exit
