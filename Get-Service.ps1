@@ -3,6 +3,7 @@
     Scripted restart of services.
 .DESCRIPTION
     Prompts for a service and checks if the service is valid. Then prompts if you want to restart it.
+    If the service isn't running, it asks if you want to start it.
 .NOTES
     Author: David Findley
     Date: July 11, 2018
@@ -10,7 +11,7 @@
 #>
 
 Param(
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $true, HelpMessage = "Enter the name of a service.")]
     [string]$Service
 )
 
@@ -35,7 +36,7 @@ else {
 }
 
 if ($Restart -eq $true){
-    Restart-Service $Service
+    Restart-Service $Status
 }
 else {
     exit
