@@ -35,7 +35,7 @@ if ($Status.Status -eq 'Running' ){
     $Response = Read-Host "Status is running. Would you like to restart the service? [Y]es or [N]o"
     switch ($Response) {
         Y {Write-Host "Ok, restarting the service $($Status.DisplayName) "; $Restart = $true }
-        N {Write-Host "Ok, you have chosen not to restart the service $($Status.DisplayName) Exiting. "; $Restart = $false}
+        N {Write-Host "Ok, you have chosen not to restart $($Status.DisplayName). Exiting. "; $Restart = $false}
         Default {"Invalid Response. Exiting."; exit}
     }
 
