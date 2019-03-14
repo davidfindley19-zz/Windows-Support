@@ -12,12 +12,14 @@
         Version:    1.0
 #>
 
+#Declaration of function that runs the script. Domain is mandatory.
 Function Get-UserProps {
 
 Param(
     [Parameter(Mandatory=$true)]
     [string]$Domain
 )
+#Actual function for the "GUI" that you see.
 Function Show-Menu
 {
     cls
@@ -29,6 +31,7 @@ Function Show-Menu
     Write-Host "Q: Press 'Q' to quit."
 }
 
+#The AD search function.
 Function Get-Properties {
     
         cls
@@ -52,11 +55,11 @@ Function Get-Properties {
         }
         $data.Add($ItemDetails) > $null
         }    
-        
+#Export as CSV for easier reporting.       
 $data | Export-Csv C:\Temp\Results.csv -NoTypeInformation
 
 }
-
+#Allows you to the make selection. Mostly behind the scenes for Show-Menu
 do{
 
     Show-Menu
@@ -68,7 +71,7 @@ do{
         3 {$property = 'userprincipalname'}
         Q {return}
     }
-      
+    #Calls the search function from above  
     Get-Properties
 
     Pause
