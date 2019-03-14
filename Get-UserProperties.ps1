@@ -1,12 +1,22 @@
+<#
+    .SYNOPSIS
+        Function to grab AD user properties.
+    .DESCRIPTION
+        Written as a function to grab an AD account's properties and export them as a CSV file. Written
+        to extract accounts from a txt file, but can be updated for other types.
+    .NOTES
+        Author:     David Findley
+        Date:       3/14/2019
+        Version:    1.0
+#>
 Function Get-UserProperties{
     Param(
       [Parameter(Mandatory=$true)]
       [string]$Server
    )
-Import-Module ActiveDirectory
 
 $data = [System.Collections.ArrayList]@()
-$List = Get-Content "C:\Path\To\File.txt"
+$List = Get-Content "C:\Users\ov7227\Documents\Github Repo\Windows-Support\Active Directory\Users.txt"
 
 Foreach ($account in $List){
     $User = Get-ADUser -Filter {extensionattribute2 -like $account} -Properties * -Server $Server
