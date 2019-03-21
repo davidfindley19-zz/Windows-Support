@@ -44,8 +44,8 @@ Function Show-Domain{
     Clear-Host
     Write-Host " ========== Please select your domain to connect to ========== "
 #Multiple domains to choose from in our environment.
-    Write-Host "1: Press '1' to connect to domain.com."
-    Write-Host "2: Press '2' to connect to domain.com."
+    Write-Host "1: Press '1' to connect to domain1."
+    Write-Host "2: Press '2' to connect to domain2."
     Write-Host "Q: Press 'Q' to quit."
 }
 #Function for the menu output.
@@ -105,8 +105,8 @@ do{
     Show-Domain
     $domainoption = Read-Host "Please make a selection."
     switch ($domainoption) {
-        1 {$domain = 'phibred.com'}
-        2 {$domain = 'ddnet1.net'}
+        1 {$domain = 'domain1'}
+        2 {$domain = 'domain2'}
         Q {return}
     }
 
