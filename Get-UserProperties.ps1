@@ -16,7 +16,7 @@ Function Get-UserProperties{
    )
 
 $data = [System.Collections.ArrayList]@()
-$List = Get-Content "C:\Users\ov7227\Documents\Github Repo\Windows-Support\Active Directory\Users.txt"
+$List = Get-Content "C:\Users\Username\Documents\Github Repo\Windows-Support\Active Directory\Users.txt"
 
 Foreach ($account in $List){
     $User = Get-ADUser -Filter {extensionattribute2 -like $account} -Properties * -Server $Server
