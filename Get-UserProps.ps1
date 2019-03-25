@@ -98,6 +98,7 @@ Function Get-Properties {
 $data | Export-Csv C:\Temp\Results.csv -NoTypeInformation
 Write-Log -Message "User search completed at $(Get-Date -Format "HH:mm")"
 Rename-Item -Path C:\Temp\Logs\LogFile.csv -NewName C:\Temp\Logs\LogFile$(Get-Date -Format MMddyy-HHmm).csv
+Rename-Item -Path C:\Temp\Results.csv -NewName C:\Temp\Results\Results$(Get-Date -Format MMddyy-HHmm).csv
 
 }
 
