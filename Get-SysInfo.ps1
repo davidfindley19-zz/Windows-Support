@@ -1,3 +1,21 @@
+<#
+    .SYNOPSIS
+        Function to grab basic hardware information.
+    .DESCRIPTION
+        Needed to pull some hardware information. Wrote this script as a function with a non-mandatory parameter
+        for a computer name. You can specify the computer by using the -ComputerName parameter or it can be left 
+        blank to check the local machine. 
+    .NOTES
+        Author: David Findley
+        Date: 3/28/2019
+        Version: 1.0
+    .EXAMPLE
+        Get-SysInfo -ComputerName YourComputerNameHere
+    .EXAMPLE
+        Get-SysInfo
+        
+#>
+
 Function Get-SysInfo{
 
     [CmdletBinding()]
