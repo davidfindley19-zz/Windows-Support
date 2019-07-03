@@ -1,3 +1,14 @@
+<#
+    .SYNOPSIS
+        Reinstalls the SCCM client.
+    .DESCRIPTION
+        Uninstalls the SCCM client and deletes any associated files. Then reinstalls the client.
+    .NOTES
+        Author:     David Findley
+        Date:       7/3/2019
+        Version:    1.0
+#>
+
 Function Reset-SCCM {
 
 Write-Host "SCCM Repair Process" -ForegroundColor Green
