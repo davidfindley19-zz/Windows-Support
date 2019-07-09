@@ -6,7 +6,7 @@
     .NOTES
         Author:     David Findley
         Date:       7/3/2019
-        Version:    1.0
+        Version:    1.1
 #>
 
 Function Reset-SCCM {
@@ -16,33 +16,74 @@ Write-Host "SCCM Repair Process" -ForegroundColor Green
 Write-Host `n"Stopping Windows Management services..."
 Stop-Service -Name Winmgmt -Force
 
-Write-Host `n"Setting SCCM uninstall location." 
-Set-Location C:\Windows\ccmsetup
-
 Write-Host `n"Starting uninstall service..."
-Start-Process .\ccmsetup -ArgumentList "/uninstall" -Wait
+Start-Process C:\Windows\ccmsetup\ccmsetup.exe -ArgumentList "/uninstall" -Wait
 Write-Host `n"Waiting on the uninstall process to complete..." 
 Write-Host `n"Uninstall complete. Continuing with removal." -ForegroundColor Green
 
 Set-Location C:\
 
-Write-Host `n"Removing SCCM related files and folders."
-Get-ChildItem C:\Windows\CCM | Remove-Item -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
-Remove-Item -Path C:\Windows\ccmcache -Recurse -Confirm:$false -ErrorAction SilentlyContinue
-Remove-Item -Path C:\Windows\ccmsetup -Recurse -Confirm:$false -ErrorAction SilentlyContinue
-Remove-Item -Path C:\Windows\SMSCFG.INI -Confirm:$false -ErrorAction SilentlyContinue
+Write-Host `n"Removing SCCM related folders."
+
+$Folders = @(
+    "C:\Windows\CCM"
+    "C:\Windows\ccmcache"
+    "C:\Windows\ccmsetup"
+)
+
+foreach ($Folder in $Folders){
+    Write-Host `n"Removing $Folder" -ForegroundColor Magenta
+    Remove-Item -Path $Folder -Recurse -Force -Confirm:$false -ErrorAction Continue -Verbose | Out-Host
+    if ($? -eq $true){
+        Write-Host `n"$Folder removed." -ForegroundColor Green
+    }
+    else {
+        Write-Host `n"$Folder not found or an error has occurred." -ForegroundColor Red
+    }
+}
+
+Write-Host `n"Deleting SCCM related files."
+
+$Files = @(
+    "C:\Windows\SMSCFG.INI"
+    "C:\Windows\sms*.mif"
+)
+
+foreach($File in $Files){
+    Write-Host `n"Removing $File." -ForegroundColor Magenta
+    Remove-Item -Path $File -Force -Confirm:$false -ErrorAction Continue -Verbose | Out-Host 
+    if ($? -eq $true){
+        Write-Host "$File removed." -ForegroundColor Green
+    }
+    else {
+        Write-Host "$File not found or an error has occurred." -ForegroundColor Red
+    }
+}
 
 Write-Host `n"Setting location for Registry key deletion..."
-Remove-Item -Path 'HKLM:\SOFTWARE\Microsoft\CCMSetup\' -Recurse -Confirm:$false -ErrorAction SilentlyContinue
-Remove-Item -Path 'HKLM:\SOFTWARE\Microsoft\CCM\' -Recurse -Confirm:$false -ErrorAction SilentlyContinue
-Remove-Item -Path 'HKLM:\SOFTWARE\Microsoft\SMS\' -Recurse -Confirm:$false -ErrorAction SilentlyContinue
+$RegistryKeys = @(
+    "HKLM:\SOFTWARE\Microsoft\ccm"
+    "HKLM:\SOFTWARE\Microsoft\CCMSETUP"
+    "HKLM:\SOFTWARE\Microsoft\SMS"
+)
+
+foreach ($Key in $RegistryKeys){
+    Write-Host "Removing $Key" -ForegroundColor Magenta
+    Remove-Item $Key -Recurse -Force -Confirm:$false -ErrorAction Continue -Verbose | Out-Host
+        if ($? -eq $true) {
+            Write-Host "$Key removed." -ForegroundColor Green
+        }
+        else {
+            Write-Host "$Key not found or an error has occurred." -ForegroundColor Red
+        }
+}
 
 Write-Host `n"Restarting the WMI Service..." -ForegroundColor Yellow
 Start-Service -Name Winmgmt
 Start-Sleep 2
 
 Write-Host `n"Reinstalling the SCCM Client..." -ForegroundColor Yellow
-New-PSDrive -Name "P" -PSProvider "FileSystem" -Root "\\path\to\network\share"
+New-PSDrive -Name "P" -PSProvider "FileSystem" -Root "\\PATH\TO\SHARE"
 Set-Location P:\
 Start-Process .\ccmsetup.exe -Wait
 
